@@ -1,4 +1,4 @@
-ubisky
+SKYBIR
 ======
 
-Sinatra API 
+Sinatra API for Flight Reviews APP 
