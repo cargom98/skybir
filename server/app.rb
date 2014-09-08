@@ -1,10 +1,28 @@
 # app.rb
+ENV['RACK_ENV'] ||= 'development'
+ 
+require 'bundler'
+Bundler.require :default, ENV['RACK_ENV'].to_sym
+
+
 require 'sinatra'
 require 'rest-client'
 require 'json'
 require 'twilio-ruby'
 
 class FlightApi < Sinatra::Base
+  
+  set :root, File.dirname(__FILE__)
+ 
+  enable :sessions
+ 
+  def require_logged_in
+    redirect('/sessions/new') unless is_authenticated?
+  end
+ 
+  def is_authenticated?
+    return !!session[:user_id]
+  end
   
   def sendcode(number,code)
     # put your own credentials here 
@@ -21,6 +39,10 @@ class FlightApi < Sinatra::Base
     })
   end
 
+  get '/' do
+    "root page"
+  end
+  
   get '/version' do
     "flightapi 0.1"
   end
