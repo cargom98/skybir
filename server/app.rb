@@ -11,10 +11,14 @@ require 'json'
 require 'twilio-ruby'
 require 'data_mapper'
 require File.dirname(__FILE__) + '/model.rb'
+
 before do
     content_type 'application/json'
 end
-  
+
+set :bind, '0.0.0.0'
+set :port, 9494  
+
 def sendcode(number,code)
     # put your own credentials here 
     account_sid = 'AC66e5bf0268a022039ae5e46db4b30356' 
