@@ -5,7 +5,8 @@ gem 'rest-client'
 gem 'json'
 gem 'twilio-ruby'
 gem 'sqlite3'
-gem 'datamapper'
+gem 'data_mapper'
+gem "dm-sqlite-adapter"
 
 group :test, :development do
 gem 'rspec'

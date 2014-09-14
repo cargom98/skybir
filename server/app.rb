@@ -6,47 +6,16 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 
 
 require 'sinatra'
-require 'sinatra/json'
 require 'rest-client'
 require 'json'
 require 'twilio-ruby'
-require 'sqlite3'
-require 'datamapper'
-
-DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/skybir" ) 
-
-# Define the Person model 
-class airport
-  include DataMapper::Resource 
-
-  property :airportid, Serial, :key => true 
-  property :name, String 
-  property :city, String
-  property :country, String 
-  property :iata, String
-  property :icao, String
-  property :lat, Float 
-  property :long, Float
-  property :alt, Float
-  property :timezone, Float 
-  property :dst, String
-end 
-
-class FlightApi < Sinatra::Base
+require 'data_mapper'
+require File.dirname(__FILE__) + '/model.rb'
+before do
+    content_type 'application/json'
+end
   
-  set :root, File.dirname(__FILE__)
- 
-  enable :sessions
- 
-  def require_logged_in
-    redirect('/sessions/new') unless is_authenticated?
-  end
- 
-  def is_authenticated?
-    return !!session[:user_id]
-  end
-  
-  def sendcode(number,code)
+def sendcode(number,code)
     # put your own credentials here 
     account_sid = 'AC66e5bf0268a022039ae5e46db4b30356' 
     auth_token = '07573bd8292ae07dd1f7e186c3e86b32' 
@@ -59,17 +28,17 @@ class FlightApi < Sinatra::Base
       :to => "#{number}", 
       :body => "Please enter the following code #{code}",  
     })
-  end
+end
 
-  get '/' do
+get '/' do
     "root page"
-  end
+end
   
-  get '/version' do
+get '/version' do
     "flightapi 0.1"
-  end
+end
   
-  get '/nearbyairport' do
+get '/flightstatnearbyairport' do
     appid = "816afdf3"
     appkey = "5131ea27d6454d7d0cc72c133ee954c2"
     # long = "#{params[:long]}"
@@ -81,19 +50,26 @@ class FlightApi < Sinatra::Base
     response = RestClient.get(url)
   	result = JSON.parse(response.body)
   	result.to_json
-  end
+end
   
-  get '/registration' do
+get '/nearbyairport' do
+    long1 = params[:long].to_f+0.5
+    long2 = params[:long].to_f-0.5
+    lat1 = params[:lat].to_f+0.5
+    lat2 = params[:lat].to_f-0.5
+    airport = Airports.all(:lat.gt => lat2, :lat.lt => lat1, :long.gt => long2, :long.lt => long1, :iata.not => "")
+    airport.to_json
+end
+  
+get '/registration' do
     phone = "#{params[:number]}"
     code = Random.new.rand(1000..9999)
     sendcode("#{phone}","#{code}")   
-  end
-  
-  get '/airportinfo' do
-    iata = "#{params[:iata]}"
-    res = airport.first( :iata => '#{iata}')
-    put res
-
-  end
-
 end
+  
+get '/airportinfo' do
+    iata = "#{params[:iata]}"
+    airport = Airports.first(:iata => iata)
+    airport.to_json
+end
+
