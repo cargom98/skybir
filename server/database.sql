@@ -1,0 +1,2 @@
+create table airports(airportid int, name varchar(20), city varchar(20), country varchar(20), iata varchar(3), icao varchar(4), lat real, long real, alt int, timezone real, dst varchar(1));
+create table airline(airlinetid int, name varchar(20), alias varchar(20), iata varchar(3), icao varchar(4), callsign varchar(20), country varchar(20),  active varchar(1));

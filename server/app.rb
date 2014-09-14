@@ -6,9 +6,31 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 
 
 require 'sinatra'
+require 'sinatra/json'
 require 'rest-client'
 require 'json'
 require 'twilio-ruby'
+require 'sqlite3'
+require 'datamapper'
+
+DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/skybir" ) 
+
+# Define the Person model 
+class airport
+  include DataMapper::Resource 
+
+  property :airportid, Serial, :key => true 
+  property :name, String 
+  property :city, String
+  property :country, String 
+  property :iata, String
+  property :icao, String
+  property :lat, Float 
+  property :long, Float
+  property :alt, Float
+  property :timezone, Float 
+  property :dst, String
+end 
 
 class FlightApi < Sinatra::Base
   
@@ -50,9 +72,12 @@ class FlightApi < Sinatra::Base
   get '/nearbyairport' do
     appid = "816afdf3"
     appkey = "5131ea27d6454d7d0cc72c133ee954c2"
-    long = "17"
-    lat ="39"
+    # long = "#{params[:long]}"
+    # lat = "#{params[:lat]}"
+    long = "-80"
+    lat = "25"
     url = "https://api.flightstats.com/flex/airports/rest/v1/json/withinRadius/#{long}/#{lat}/30?appId=#{appid}&appKey=#{appkey}"
+    "https://api.flightstats.com/flex/airports/rest/v1/json/withinRadius/#{long}/#{lat}/30?appId=#{appid}&appKey=#{appkey}"
     response = RestClient.get(url)
   	result = JSON.parse(response.body)
   	result.to_json
@@ -63,4 +88,12 @@ class FlightApi < Sinatra::Base
     code = Random.new.rand(1000..9999)
     sendcode("#{phone}","#{code}")   
   end
+  
+  get '/airportinfo' do
+    iata = "#{params[:iata]}"
+    res = airport.first( :iata => '#{iata}')
+    put res
+
+  end
+
 end

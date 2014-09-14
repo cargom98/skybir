@@ -4,15 +4,13 @@ gem 'sinatra'
 gem 'rest-client'
 gem 'json'
 gem 'twilio-ruby'
+gem 'sqlite3'
+gem 'datamapper'
 
 group :test, :development do
 gem 'rspec'
 end
  
 group :test do
-gem 'sinatra'
-gem 'rest-client'
-gem 'json'
-gem 'twilio-ruby'	
 gem 'rack-test'
 end
