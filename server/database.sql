@@ -1,2 +1,3 @@
 create table airports(airportid int, name varchar(20), city varchar(20), country varchar(20), iata varchar(3), icao varchar(4), lat real, long real, alt int, timezone real, dst varchar(1));
 create table airline(airlinetid int, name varchar(20), alias varchar(20), iata varchar(3), icao varchar(4), callsign varchar(20), country varchar(20),  active varchar(1));
+create table airportinfo(id int, ident varchar(5), type varchar(16), name varchar(25), latitude_deg real, longitude_deg real, elevation_ft real, continent varchar(4), iso_country varchar(20), iata varchar(3), icao varchar(4), lat real, long real, alt int, timezone real, dst varchar(1));
