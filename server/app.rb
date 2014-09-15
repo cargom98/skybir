@@ -61,8 +61,8 @@ get '/nearbyairport' do
     long2 = params[:long].to_f-0.5
     lat1 = params[:lat].to_f+0.5
     lat2 = params[:lat].to_f-0.5
-    airport = Airports.all(:lat.gt => lat2, :lat.lt => lat1, :long.gt => long2, :long.lt => long1, :iata.not => "")
-    airport.to_json
+    airportinf = Airportinfo.all(:latitude_deg.gt => lat2, :latitude_deg.lt => lat1, :longitude_deg.gt => long2, :longitude_deg.lt => long1, :iata_code.not => "")
+    airportinf.to_json(:only => [:iata_code, :name])
 end
   
 get '/registration' do
@@ -73,7 +73,7 @@ end
   
 get '/airportinfo' do
     iata = "#{params[:iata]}"
-    airport = Airports.first(:iata => iata)
-    airport.to_json
+    airport = Airportinfo.first(:iata_code => iata)
+    airport.to_json(:only => [:iata_code, :name])
 end
 
